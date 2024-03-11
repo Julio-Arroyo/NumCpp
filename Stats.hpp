@@ -10,6 +10,8 @@ namespace NumCpp {
   double mean(const std::vector<double>& x);
   double moment(const std::vector<double>& x, const size_t k);
   double std(const std::vector<double>& x);
+  double skew(const std::vector<double>& x);
+  double kurtosis(const std::vector<double>& x, const bool excess=true);
 
   double mean(const std::vector<double>& x) {
     size_t n{x.size()};
@@ -48,6 +50,37 @@ namespace NumCpp {
 
   double std(const std::vector<double>& x) {
     return std::sqrt(moment(x, 2));
+  }
+
+  double skew(const std::vector<double>& x) {
+    size_t n = x.size();
+    if (n == 0) {
+      throw std::invalid_argument("ERROR skew: cannot compute skewness of empty vector");
+    }
+
+    double m3 = moment(x, 3);
+    double m2 = moment(x, 2);
+
+    double skew = m3/std::sqrt(std::pow(m2, 3));
+
+    return skew;
+  }
+
+  double kurtosis(const std::vector<double>& x, const bool excess) {
+    size_t n = x.size();
+    if (n == 0) {
+      throw std::invalid_argument("ERROR kurtosis: cannot compute kurtosis of empty vector");
+    }
+
+    double m4 = moment(x, 4);
+    double var = moment(x, 2);
+
+    double kurt = m4/std::pow(var, 2);
+    if (excess) {
+      kurt -= 3;
+    }
+
+    return kurt;
   }
 }
 
